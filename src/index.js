@@ -1,40 +1,33 @@
-const Ajv = require('ajv');
 const requireDirectory = require('require-directory');
 
-const { flattenSchemaBranch, get, replaceVars } = require('./utils');
+const { createAjvObject, flattenSchemaBranch, get, replaceVars } = require('./utils');
 const ValidationError = require('./ValidationError');
 
 module.exports = {
-
   createValidationMw(options) {
-    return function (reqVarName, schemaName) {
-      const ajv = new Ajv({
-        schemas: Object.values(options.schema)
-      });
+    return (reqVarName, schemaName) => (req, _, next) => {
+      const reqSchemaName = replaceVars(schemaName, req);
 
-      return (req, _, next) => {
-        const reqSchemaName = replaceVars(schemaName, req);
-        if (options.debug) {
-          console.log(`validate req.${reqVarName} with ${reqSchemaName}`);
-        }
+      if (options.debug) {
+        console.log(`validate req.${reqVarName} with ${reqSchemaName}`);
+      }
 
-        const schemaPath = `http://api.com${reqSchemaName}`;
-        const validate = ajv.getSchema(schemaPath);
-        const data = get(req, reqVarName);
-        const valid = validate(data);
+      const ajv = createAjvObject(options.schema);
+      const validate = ajv.getSchema(`http://api.com${reqSchemaName}`);
+      const data = get(req, reqVarName);
 
-        if (!valid) {
-          return next(new ValidationError(validate.errors, data, options.debug));
-        } else {
-          return next();
-        }
-      };
+      const error = !validate(data)
+        && new ValidationError(validate.errors, data, options.debug);
+
+      return next(error && error);
     };
   },
 
-  createSchemaList(mod) {
-    const schemaTree = requireDirectory(mod);
-    const schemaList = (Object.entries(schemaTree).map(flattenSchemaBranch)).flat();
+  createSchemaList(modelsModule) {
+    const schemaTree = requireDirectory(modelsModule);
+    const schemaList = Object.entries(schemaTree)
+      .map(flattenSchemaBranch)
+      .flat();
 
     return schemaList;
   }

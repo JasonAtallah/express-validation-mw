@@ -1,5 +1,12 @@
+const Ajv = require('ajv');
 
 const utils = module.exports = {
+
+  createAjvObject(schema) {
+    return new Ajv({
+      schemas: Object.values(schema)
+    });
+  },
 
   flattenSchemaBranch([branchName, schemaDefs]) {
     const schemas = Object.entries(schemaDefs);
@@ -21,11 +28,11 @@ const utils = module.exports = {
   },
 
   replaceVars(str, values) {
-    return str.replace(
-      // eslint-disable-next-line no-useless-escape
-      /\{\{([\w\_\.]+)\}\}/g,
-      group1 => utils.get(values, group1)
-    );
+    // eslint-disable-next-line no-useless-escape
+    const searchRegex = /\{\{([\w\_\.]+)\}\}/g;
+    const newValue = group => utils.get(values, group);
+
+    return str.replace(searchRegex, newValue);
   }
 
 };
