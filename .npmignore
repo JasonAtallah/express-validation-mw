@@ -1,0 +1,7 @@
+.vscode/
+example/
+node_modules/
+tests/
+.gitignore
+.eslintrc
+.eslintignore
