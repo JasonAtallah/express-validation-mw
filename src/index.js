@@ -1,43 +1,13 @@
 const Ajv = require('ajv');
+const requireDirectory = require('require-directory');
 
-function get(obj, path, defaultValue) {
-  const travel = regexp =>
-    String.prototype.split
-      .call(path, regexp)
-      .filter(Boolean)
-      .reduce((res, key) => (res !== null && res !== undefined ? res[key] : res), obj);
-  const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/);
-  return result === undefined || result === obj ? defaultValue : result;
-}
-
-function replaceVars(str, values) {
-  return str.replace(
-    // eslint-disable-next-line no-useless-escape
-    /\{\{([\w\_\.]+)\}\}/g,
-    group1 => get(values, group1)
-  );
-}
-
-class ValidationError extends Error {
-  constructor(errors, data, debug) {
-    const error = errors[0];
-    const message = `${error.dataPath.replace('.', ' ').trim()} ${error.message}`;
-
-    super(message);
-
-    if (debug) {
-      console.log(`validation error: ${message}`);
-      console.log(data);
-    }
-
-    this.status = 400;
-  }
-}
+const { flattenSchemaBranch, get, replaceVars } = require('./utils');
+const ValidationError = require('./ValidationError');
 
 module.exports = {
+
   createValidationMw(options) {
-    
-    function validateReqVar(reqVarName, schemaName) {
+    return function (reqVarName, schemaName) {
       const ajv = new Ajv({
         schemas: Object.values(options.schema)
       });
@@ -59,26 +29,14 @@ module.exports = {
           return next();
         }
       };
-    }
-
-    return validateReqVar;
+    };
   },
 
   createSchemaList(mod) {
-    const requireDirectory = require('require-directory');
-
-    const flattenSchemaBranch = ([branchName, schemaDefs]) => {
-      const schemas = Object.entries(schemaDefs);
-      return schemas.map(([fileName, def]) => {
-        return Object.assign(def, {
-          $id: `http://api.com/${branchName}/${fileName}`
-        });
-      });
-    };
-
     const schemaTree = requireDirectory(mod);
     const schemaList = (Object.entries(schemaTree).map(flattenSchemaBranch)).flat();
 
     return schemaList;
   }
+
 };
