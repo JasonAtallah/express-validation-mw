@@ -1,0 +1,20 @@
+
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "$ref": "/primitives/comment"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": ["title", "body"]
+}

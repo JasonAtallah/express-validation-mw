@@ -1,0 +1,13 @@
+  {
+    "type": "object",
+    "properties": {
+      "user": {
+        "type": "string"
+      },
+      "comment": {
+        "type": "string"
+      }
+    },
+    "required": ["user", "comment"],
+    "additionalProperties": false
+  }

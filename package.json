@@ -1,0 +1,33 @@
+{
+  "name": "express-validation-mw",
+  "version": "0.0.1",
+  "description": "Middleware for validation incoming and outgoing express requests",
+  "main": "src/index.js",
+  "scripts": {
+    "start-example": "node example"
+  },
+  "dependencies": {
+    "ajv": "^6.11.0",
+    "require-directory": "^2.1.1"
+  },
+  "devDependencies": {
+    "body-parser": "^1.19.0",
+    "eslint": "^6.8.0",
+    "express": "^4.17.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JasonAtallah/express-validation-mw.git"
+  },
+  "keywords": [
+    "express",
+    "middleware",
+    "validation"
+  ],
+  "author": "Jason Atallah <jason.atallah@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JasonAtallah/express-validation-mw/issues"
+  },
+  "homepage": "https://github.com/JasonAtallah/express-validation-mw#readme"
+}
