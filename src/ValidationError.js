@@ -1,3 +1,8 @@
+/**
+ * Custom error used when validation fails.
+ * Logs error and data associated with it.
+ * Only uses first error in array of errors.
+ */
 
 module.exports = class ValidationError extends Error {
   constructor(errors, data, debug) {

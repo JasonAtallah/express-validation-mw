@@ -4,6 +4,10 @@ const { createAjvObject, flattenSchemaBranch, get, replaceVars } = require('./ut
 const ValidationError = require('./ValidationError');
 
 module.exports = {
+  /**
+   * TODO: document
+   * @param {*} options 
+   */
   createValidationMw(options) {
     return (reqVarName, schemaName) => (req, _, next) => {
       const reqSchemaName = replaceVars(schemaName, req);
@@ -23,6 +27,10 @@ module.exports = {
     };
   },
 
+  /**
+   * TODO: document
+   * @param {*} modelsModule 
+   */
   createSchemaList(modelsModule) {
     const schemaTree = requireDirectory(modelsModule);
     const schemaList = Object.entries(schemaTree)
